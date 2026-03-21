@@ -1,0 +1,42 @@
+[
+  {
+    "id": "perfil_1",
+    "descricao": "Psicólogo SP buscando mestrado",
+    "grandes_areas": ["ciencias_humanas"],
+    "estados": ["SP"],
+    "niveis": ["mestrado"],
+    "aceita_ead": false
+  },
+  {
+    "id": "perfil_2",
+    "descricao": "Engenheiro RJ/MG aceita doutorado",
+    "grandes_areas": ["engenharias"],
+    "estados": ["RJ", "MG"],
+    "niveis": ["doutorado"],
+    "aceita_ead": false
+  },
+  {
+    "id": "perfil_3",
+    "descricao": "Múltiplas áreas, qualquer estado, aceita EaD",
+    "grandes_areas": ["ciencias_sociais_aplicadas", "ciencias_humanas"],
+    "estados": [],
+    "niveis": ["mestrado", "mestrado_profissional"],
+    "aceita_ead": true
+  },
+  {
+    "id": "perfil_4",
+    "descricao": "Saúde Norte/Nordeste",
+    "grandes_areas": ["ciencias_saude"],
+    "estados": ["AM", "PA", "BA", "CE"],
+    "niveis": ["mestrado", "doutorado"],
+    "aceita_ead": false
+  },
+  {
+    "id": "perfil_5",
+    "descricao": "Exatas Sul",
+    "grandes_areas": ["ciencias_exatas"],
+    "estados": ["RS", "SC", "PR"],
+    "niveis": ["doutorado"],
+    "aceita_ead": false
+  }
+]
