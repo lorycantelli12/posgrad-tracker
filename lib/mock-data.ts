@@ -512,10 +512,12 @@ export function calcularScore(edital: Edital, prefs: UserPreferences): number {
   if (isInternacional && prefs.paises.length > 0 && !prefs.paises.includes("outros")) {
     const pd = ((edital as any).pais_destino || "").toLowerCase();
     const fonte = (edital.fonte || "").toLowerCase();
+    const PAISES_EUROPA = ["italia","espanha","irlanda","alemanha","franca","portugal","franca","austria","belgica","holanda","suecia","noruega","dinamarca","finlandia","suica","poloni","europ"];
+    const isEuropa = fonte === "euraxess" || PAISES_EUROPA.some((p) => pd.includes(p));
     const match =
-      (prefs.paises.includes("europa") && (fonte === "euraxess" || pd.includes("europ"))) ||
-      (prefs.paises.includes("japao") && (pd.includes("jap"))) ||
-      (prefs.paises.includes("china") && (pd.includes("chin"))) ||
+      (prefs.paises.includes("europa") && isEuropa) ||
+      (prefs.paises.includes("japao") && pd.includes("jap")) ||
+      (prefs.paises.includes("china") && pd.includes("chin")) ||
       (prefs.paises.includes("america_norte") && (pd.includes("estados unidos") || pd.includes("eua") || pd.includes("canad")));
     if (!match) return 0;
   }

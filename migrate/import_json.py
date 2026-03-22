@@ -141,10 +141,13 @@ def _row_from_internacional(edital: dict) -> dict:
     nivel_raw = edital.get("nivel")
     nivel = nivel_raw if nivel_raw else (niveis[0] if niveis else None)
 
+    # Preserva a fonte original do JSON (euraxess, internacional, etc.)
+    fonte = edital.get("fonte", "internacional")
+
     return {
         "id":                 edital["id"],
         "programa_nome":      titulo[:300],
-        "ies_nome":           edital.get("universidade", edital.get("ies_sigla", "Internacional")),
+        "ies_nome":           edital.get("universidade", edital.get("ies_nome", edital.get("ies_sigla", "Internacional"))),
         "ies_sigla":          edital.get("ies_sigla"),
         "grande_area":        _inferir_area(texto),
         "area_especifica":    None,
@@ -157,7 +160,7 @@ def _row_from_internacional(edital: dict) -> dict:
         "data_inicio_aulas":  None,
         "link_edital":        edital.get("link_edital"),
         "bolsas_disponiveis": edital.get("bolsas_disponiveis", True),
-        "fonte":              "internacional",
+        "fonte":              fonte,
         "descricao":          descricao[:1000],
         "internacional":      True,
         "pais_destino":       edital.get("pais_destino"),

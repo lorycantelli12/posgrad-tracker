@@ -206,18 +206,27 @@ def _scrape_detalhe(cliente: httpx.Client, item: dict) -> dict | None:
 def coletar_euraxess(paises: list[str] | None = None) -> list[dict]:
     """
     Coleta editais do EURAXESS para os países configurados.
+    Salva apenas editais com data_limite >= hoje (descarta expirados).
 
     Args:
         paises: lista de nomes em inglês (ex: ["Italy", "Spain"]).
                 Se None, usa todos os países configurados em PAISES.
     """
+    from datetime import date
+    hoje = date.today().isoformat()
+
     alvo = {k: v for k, v in PAISES.items() if (paises is None or k in paises)}
     logger.info(f"EURAXESS: coletando para {list(alvo.keys())}")
 
     todos: list[dict] = []
 
     with httpx.Client(follow_redirects=True, timeout=30) as cliente:
-        for pais_en, pais_pt in alvo.items():
+        for i, (pais_en, pais_pt) in enumerate(alvo.items()):
+            # Pausa maior entre países para evitar rate limit
+            if i > 0:
+                logger.info(f"Aguardando 30s antes de {pais_en}...")
+                time.sleep(30)
+
             logger.info(f"── {pais_en} ──")
 
             # Fase 1: listing
@@ -227,13 +236,22 @@ def coletar_euraxess(paises: list[str] | None = None) -> list[dict]:
             # Fase 2: detalhe (extrai link original)
             editais_pais: list[dict] = []
             for item in items_listing:
+                # Pula na fase de listing se já tem data passada
+                if item.get("prazo") and item["prazo"] < hoje:
+                    continue
                 edital = _scrape_detalhe(cliente, item)
                 if edital:
                     editais_pais.append(edital)
 
-            logger.info(f"{pais_en}: {len(editais_pais)} editais com link original")
+            logger.info(f"{pais_en}: {len(editais_pais)} editais abertos com link original")
             todos.extend(editais_pais)
 
-    salvar_json(todos, DATA_DIR / "editais_euraxess.json", logger)
-    logger.info(f"EURAXESS total: {len(todos)} editais salvos")
-    return todos
+    # Filtro final: apenas futuros (data_limite ausente = trata como aberto)
+    abertos = [e for e in todos if not e.get("data_limite") or e["data_limite"] >= hoje]
+    expirados = len(todos) - len(abertos)
+    if expirados:
+        logger.info(f"Descartados {expirados} editais expirados")
+
+    salvar_json(abertos, DATA_DIR / "editais_euraxess.json", logger)
+    logger.info(f"EURAXESS total: {len(abertos)} editais abertos salvos")
+    return abertos
