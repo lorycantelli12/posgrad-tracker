@@ -42,7 +42,6 @@ export default function EstadosPage() {
   const router = useRouter();
   const [selecionados, setSelecionados] = useState<UF[]>([]);
   const [aceitaEad, setAceitaEad] = useState(false);
-  const [aceitaInternacional, setAceitaInternacional] = useState(false);
 
   function toggleEstado(uf: UF) {
     setSelecionados((prev) =>
@@ -53,7 +52,6 @@ export default function EstadosPage() {
   function handleContinuar() {
     sessionStorage.setItem("posgrad_estados", JSON.stringify(selecionados));
     sessionStorage.setItem("posgrad_ead", JSON.stringify(aceitaEad));
-    sessionStorage.setItem("posgrad_internacional", JSON.stringify(aceitaInternacional));
     router.push("/onboarding/nivel");
   }
 
@@ -99,38 +97,16 @@ export default function EstadosPage() {
           ))}
         </div>
 
-        {/* Opções de modalidade/localização */}
-        <div className="mt-6 space-y-3">
-          <div className="p-4 rounded-xl border border-gray-200 flex items-center gap-3">
-            <Checkbox
-              id="ead"
-              checked={aceitaEad}
-              onCheckedChange={(v) => setAceitaEad(Boolean(v))}
-            />
-            <label htmlFor="ead" className="text-sm text-gray-700 cursor-pointer">
-              Aceito programas EaD e semipresenciais
-            </label>
-          </div>
-
-          <button
-            onClick={() => setAceitaInternacional(!aceitaInternacional)}
-            className={`w-full flex items-center gap-4 p-4 rounded-xl border-2 text-left transition-all ${
-              aceitaInternacional
-                ? "border-blue-900 bg-blue-50"
-                : "border-gray-200 hover:border-gray-300"
-            }`}
-          >
-            <span className="text-3xl">🌍</span>
-            <div className="flex-1">
-              <p className={`font-semibold text-sm ${aceitaInternacional ? "text-blue-900" : "text-gray-900"}`}>
-                Também quero bolsas internacionais
-              </p>
-              <p className="text-xs text-gray-500 mt-0.5">
-                CAPES, CNPq, Fulbright, DAAD, JSPS, Erasmus e mais
-              </p>
-            </div>
-            {aceitaInternacional && <span className="text-blue-900">✓</span>}
-          </button>
+        {/* EaD checkbox */}
+        <div className="mt-6 p-4 rounded-xl border border-gray-200 flex items-center gap-3">
+          <Checkbox
+            id="ead"
+            checked={aceitaEad}
+            onCheckedChange={(v) => setAceitaEad(Boolean(v))}
+          />
+          <label htmlFor="ead" className="text-sm text-gray-700 cursor-pointer">
+            Aceito programas EaD e semipresenciais
+          </label>
         </div>
 
         <div className="mt-8 space-y-3">

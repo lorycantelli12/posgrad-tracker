@@ -36,6 +36,8 @@ const NIVEIS: { value: Nivel; label: string; desc: string; emoji: string }[] = [
 export default function NivelPage() {
   const router = useRouter();
   const [selecionados, setSelecionados] = useState<Nivel[]>([]);
+  const [aceitaInternacional, setAceitaInternacional] = useState(false);
+
   function toggleNivel(nivel: Nivel) {
     setSelecionados((prev) =>
       prev.includes(nivel) ? prev.filter((n) => n !== nivel) : [...prev, nivel]
@@ -44,6 +46,7 @@ export default function NivelPage() {
 
   function handleContinuar() {
     sessionStorage.setItem("posgrad_niveis", JSON.stringify(selecionados));
+    sessionStorage.setItem("posgrad_internacional", JSON.stringify(aceitaInternacional));
     router.push("/onboarding/resultado");
   }
 
@@ -76,21 +79,35 @@ export default function NivelPage() {
               >
                 <span className="text-3xl">{nivel.emoji}</span>
                 <div className="flex-1">
-                  <p
-                    className={`font-semibold ${
-                      isSelected ? "text-blue-900" : "text-gray-900"
-                    }`}
-                  >
+                  <p className={`font-semibold ${isSelected ? "text-blue-900" : "text-gray-900"}`}>
                     {nivel.label}
                   </p>
                   <p className="text-sm text-gray-500 mt-0.5">{nivel.desc}</p>
                 </div>
-                {isSelected && (
-                  <span className="text-blue-900 mt-1">✓</span>
-                )}
+                {isSelected && <span className="text-blue-900 mt-1">✓</span>}
               </button>
             );
           })}
+
+          <button
+            onClick={() => setAceitaInternacional(!aceitaInternacional)}
+            className={`w-full flex items-start gap-4 p-4 rounded-xl border-2 text-left transition-all ${
+              aceitaInternacional
+                ? "border-blue-900 bg-blue-50"
+                : "border-gray-200 hover:border-gray-300"
+            }`}
+          >
+            <span className="text-3xl">🌍</span>
+            <div className="flex-1">
+              <p className={`font-semibold ${aceitaInternacional ? "text-blue-900" : "text-gray-900"}`}>
+                Bolsas Internacionais
+              </p>
+              <p className="text-sm text-gray-500 mt-0.5">
+                CAPES, CNPq, Fulbright, DAAD, JSPS, Erasmus e mais
+              </p>
+            </div>
+            {aceitaInternacional && <span className="text-blue-900 mt-1">✓</span>}
+          </button>
         </div>
 
         <div className="mt-8">
