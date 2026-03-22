@@ -261,11 +261,23 @@ def main() -> None:
             total += upsert_editais(rows, dry_run=args.dry_run)
 
     if args.only != "dou" and args.only != "ies":
-        path_intl = data_dir / "editais_internacional.json"
-        if path_intl.exists():
-            editais = json.loads(path_intl.read_text(encoding="utf-8"))
-            rows = [_row_from_internacional(e) for e in editais]
-            print(f"\n── Internacional ({len(rows)} editais) ──────────────────────")
+        for fname, label in [
+            ("editais_internacional.json", "Internacional"),
+            ("editais_euraxess.json",      "Euraxess"),
+            ("editais_japao.json",         "Japão"),
+            ("editais_china.json",         "China"),
+        ]:
+            path = data_dir / fname
+            if not path.exists():
+                continue
+            editais = json.loads(path.read_text(encoding="utf-8"))
+            rows = []
+            for e in editais:
+                # Euraxess usa data_limite; normaliza para prazo_inscricao
+                if "data_limite" in e and "prazo_inscricao" not in e:
+                    e = {**e, "prazo_inscricao": e["data_limite"]}
+                rows.append(_row_from_internacional(e))
+            print(f"\n── {label} ({len(rows)} editais) ──────────────────────")
             total += upsert_editais(rows, dry_run=args.dry_run)
 
     print(f"\n✓ Total: {total} editais {'simulados' if args.dry_run else 'importados'}")
