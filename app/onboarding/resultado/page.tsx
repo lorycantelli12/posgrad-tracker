@@ -30,8 +30,9 @@ export default function ResultadoPage() {
     const estados = JSON.parse(sessionStorage.getItem("posgrad_estados") || "[]") as UF[];
     const niveis = JSON.parse(sessionStorage.getItem("posgrad_niveis") || "[]") as Nivel[];
     const aceita_ead = JSON.parse(sessionStorage.getItem("posgrad_ead") || "false") as boolean;
+    const aceita_internacional = JSON.parse(sessionStorage.getItem("posgrad_internacional") || "false") as boolean;
 
-    const prefs: UserPreferences = { grandes_areas: areas, micro_areas, estados, niveis, aceita_ead };
+    const prefs: UserPreferences = { grandes_areas: areas, micro_areas, estados, niveis, aceita_ead, aceita_internacional };
 
     fetchEditaisComScore(prefs).then((resultados) => {
       setEditais(resultados);

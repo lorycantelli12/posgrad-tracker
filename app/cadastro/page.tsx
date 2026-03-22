@@ -27,9 +27,8 @@ export default function CadastroPage() {
       const supabase = createClient();
       const { error: authError } = await supabase.auth.signInAnonymously();
       if (authError) {
-        setError("Erro ao criar sessão. Tente novamente.");
-        setLoading(false);
-        return;
+        // Loga o erro mas não bloqueia — onboarding continua sem sessão
+        console.warn("Auth anônima indisponível:", authError.message);
       }
     }
 

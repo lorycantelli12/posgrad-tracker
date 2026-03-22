@@ -154,6 +154,7 @@ export interface UserPreferences {
   estados: UF[];
   niveis: Nivel[];
   aceita_ead: boolean;
+  aceita_internacional?: boolean;
 }
 
 export const GRANDES_AREAS: { value: GrandeArea; label: string; emoji: string }[] = [
@@ -501,12 +502,18 @@ export function calcularScore(edital: Edital, prefs: UserPreferences): number {
   if (prefs.micro_areas.length > 0 && !prefs.micro_areas.includes(edital.micro_area)) {
     return 0;
   }
+  // Internacional: se o edital é internacional e usuário não aceita, eliminar
+  if ((edital as any).internacional && !prefs.aceita_internacional) {
+    return 0;
+  }
   // Estado: se selecionou estados, o edital DEVE ser daquele estado
   // (EaD é exceção — pode ser de qualquer estado se aceita_ead = true)
+  // (Internacional também é exceção)
   if (
     prefs.estados.length > 0 &&
     !prefs.estados.includes(edital.estado) &&
-    !(edital.modalidade === "ead" && prefs.aceita_ead)
+    !(edital.modalidade === "ead" && prefs.aceita_ead) &&
+    !(edital as any).internacional
   ) {
     return 0;
   }
