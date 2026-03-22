@@ -2,53 +2,38 @@ name: Scraper Diário
 
 on:
   schedule:
-    # 07:00 BRT = 10:00 UTC (UTC-3)
-    - cron: "0 10 * * *"
-  workflow_dispatch: # Permite rodar manualmente pelo GitHub Actions UI
+    # 07:00 BRT = 10:00 UTC
+    - cron: '0 10 * * *'
+  workflow_dispatch:  # permite rodar manualmente
 
 jobs:
-  pipeline:
-    name: Coleta → Matching → Notificações
+  scraper:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 60
+
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+      ONESIGNAL_REST_API_KEY: ${{ secrets.ONESIGNAL_REST_API_KEY }}
+      RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Python 3.11
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
-          cache: "pip"
+          python-version: '3.11'
+          cache: 'pip'
 
-      - name: Instalar dependências Python
+      - name: Instalar dependências
         run: pip install -r requirements.txt
 
-      - name: Instalar browsers Playwright
-        run: python -m playwright install chromium --with-deps
-
-      - name: Criar .env.local com secrets
-        run: |
-          cat > .env.local <<EOF
-          NEXT_PUBLIC_SUPABASE_URL=${{ secrets.SUPABASE_URL }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
-          SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_KEY }}
-          ONESIGNAL_APP_ID=${{ secrets.ONESIGNAL_APP_ID }}
-          ONESIGNAL_REST_API_KEY=${{ secrets.ONESIGNAL_REST_API_KEY }}
-          RESEND_API_KEY=${{ secrets.RESEND_API_KEY }}
-          EOF
-
-      - name: 1/3 — Rodar scrapers
+      - name: Rodar scrapers + upsert Supabase
         run: python scrapers/main.py all
 
-      - name: 2/3 — Rodar matching engine
-        run: python matching/run.py
-
-      - name: 3/3 — Enviar notificações push
-        run: python notify/send_push.py
-
-      - name: Upload logs como artefato
+      - name: Upload logs (artefato)
         if: always()
         uses: actions/upload-artifact@v4
         with:
