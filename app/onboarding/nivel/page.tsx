@@ -97,18 +97,25 @@ export default function NivelPage() {
         </div>
 
         {/* Internacional */}
-        <div className="mt-6 p-4 rounded-xl border border-gray-200 bg-gray-50">
-          <h2 className="font-semibold text-gray-900 mb-3">Internacional</h2>
-          <label className="flex items-center gap-3 cursor-pointer">
-            <div
-              onClick={() => setAceitaInternacional(!aceita_internacional)}
-              className={`w-10 h-6 rounded-full transition-colors relative ${aceita_internacional ? "bg-blue-900" : "bg-gray-200"}`}
-            >
-              <span className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow transition-all ${aceita_internacional ? "left-5" : "left-1"}`} />
-            </div>
-            <span className="text-sm text-gray-700">Incluir bolsas internacionais (CAPES, CNPq, Fulbright)</span>
-          </label>
-        </div>
+        <button
+          onClick={() => setAceitaInternacional(!aceita_internacional)}
+          className={`w-full mt-3 flex items-center gap-4 p-4 rounded-xl border-2 text-left transition-all ${
+            aceita_internacional
+              ? "border-blue-900 bg-blue-50"
+              : "border-gray-200 hover:border-gray-300"
+          }`}
+        >
+          <span className="text-3xl">🌍</span>
+          <div className="flex-1">
+            <p className={`font-semibold ${aceita_internacional ? "text-blue-900" : "text-gray-900"}`}>
+              Bolsas Internacionais
+            </p>
+            <p className="text-sm text-gray-500 mt-0.5">
+              CAPES, CNPq, Fulbright, DAAD, JSPS, Erasmus e mais
+            </p>
+          </div>
+          {aceita_internacional && <span className="text-blue-900">✓</span>}
+        </button>
 
         <div className="mt-8">
           <Button
