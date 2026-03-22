@@ -14,6 +14,7 @@ from scrapers.intl_alemanha import coletar_editais_alemanha
 from scrapers.intl_eua import coletar_editais_eua
 from scrapers.intl_australia import coletar_editais_australia
 from scrapers.intl_canada import coletar_editais_canada
+from scrapers.intl_euraxess import coletar_euraxess
 
 logger = setup_logger("internacional")
 
@@ -179,8 +180,11 @@ def coletar_editais_internacional() -> list[dict[str, Any]]:
     editais_australia = coletar_editais_australia()
     editais_canada = coletar_editais_canada()
 
+    # EURAXESS: cobre Itália, Espanha, Irlanda, Alemanha, França e mais
+    # Passa apenas os países ainda não cobertos por scrapers dedicados
+    editais_euraxess = coletar_euraxess(["Italy", "Spain", "Ireland", "France", "Portugal"])
+
     # ── Agregação ─────────────────────────────────────────────
-    # Deduplicação por id entre todas as fontes
     todos: dict[str, dict] = {}
     for e in editais_dou:
         todos[e["id"]] = e
@@ -192,6 +196,8 @@ def coletar_editais_internacional() -> list[dict[str, Any]]:
         todos[e["id"]] = e
     for e in editais_canada:
         todos[e["id"]] = e
+    for e in editais_euraxess:
+        todos[e["id"]] = e
 
     editais = list(todos.values())
 
@@ -201,6 +207,7 @@ def coletar_editais_internacional() -> list[dict[str, Any]]:
         f"EUA: {len(editais_eua)} | "
         f"Austrália: {len(editais_australia)} | "
         f"Canadá: {len(editais_canada)} | "
+        f"EURAXESS (IT/ES/IE/FR/PT): {len(editais_euraxess)} | "
         f"TOTAL: {len(editais)}"
     )
 
