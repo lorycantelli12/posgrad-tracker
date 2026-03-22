@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { OnboardingProgress } from "@/components/posgrad/onboarding-progress";
 import { requestPushPermission } from "@/components/posgrad/onesignal-provider";
 import { saveUserPreferences, triggerColdStart } from "@/lib/editais";
+import { track } from "@/components/posgrad/posthog-provider";
 import { createClient } from "@/lib/supabase";
 import type { GrandeArea, Nivel, UF } from "@/lib/mock-data";
 
@@ -47,12 +48,14 @@ export default function NotificacoesPage() {
     // Cold start: calcula matches imediatamente
     triggerColdStart(userId).catch(() => { /* background */ });
 
+    track("onboarding_complete", { notifications: true });
     setStatus("granted");
     await new Promise((r) => setTimeout(r, 800));
     router.push("/dashboard");
   }
 
   function handlePular() {
+    track("onboarding_complete", { notifications: false });
     router.push("/dashboard");
   }
 

@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { OneSignalProvider } from "@/components/posgrad/onesignal-provider";
+import { PostHogProvider } from "@/components/posgrad/posthog-provider";
 
 const geistSans = Geist({
   variable: "--font-sans",
@@ -34,7 +35,9 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="min-h-full">
-        <OneSignalProvider>{children}</OneSignalProvider>
+        <PostHogProvider>
+          <OneSignalProvider>{children}</OneSignalProvider>
+        </PostHogProvider>
       </body>
     </html>
   );

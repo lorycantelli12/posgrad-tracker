@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase";
+import { track } from "@/components/posgrad/posthog-provider";
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
@@ -32,6 +33,7 @@ export default function CadastroPage() {
       }
     }
 
+    track("onboarding_start");
     router.push("/onboarding/areas");
   }
 

@@ -8,6 +8,7 @@ import { buttonVariants } from "@/lib/button-variants";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { fetchEditaisComScore } from "@/lib/editais";
+import { track } from "@/components/posgrad/posthog-provider";
 import {
   calcularDiasRestantes,
   NIVEL_LABELS,
@@ -38,6 +39,12 @@ export default function ResultadoPage() {
     fetchEditaisComScore(prefs).then((resultados) => {
       setEditais(resultados);
       setLoading(false);
+      track("onboarding_resultado_view", {
+        total: resultados.length,
+        tem_internacional: resultados.some((e) => e.internacional),
+        grandes_areas: areas,
+        niveis,
+      });
     });
   }, []);
 
