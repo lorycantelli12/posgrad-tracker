@@ -36,8 +36,6 @@ const NIVEIS: { value: Nivel; label: string; desc: string; emoji: string }[] = [
 export default function NivelPage() {
   const router = useRouter();
   const [selecionados, setSelecionados] = useState<Nivel[]>([]);
-  const [aceita_internacional, setAceitaInternacional] = useState<boolean>(false);
-
   function toggleNivel(nivel: Nivel) {
     setSelecionados((prev) =>
       prev.includes(nivel) ? prev.filter((n) => n !== nivel) : [...prev, nivel]
@@ -46,7 +44,6 @@ export default function NivelPage() {
 
   function handleContinuar() {
     sessionStorage.setItem("posgrad_niveis", JSON.stringify(selecionados));
-    sessionStorage.setItem("posgrad_internacional", JSON.stringify(aceita_internacional));
     router.push("/onboarding/resultado");
   }
 
@@ -95,27 +92,6 @@ export default function NivelPage() {
             );
           })}
         </div>
-
-        {/* Internacional */}
-        <button
-          onClick={() => setAceitaInternacional(!aceita_internacional)}
-          className={`w-full mt-3 flex items-center gap-4 p-4 rounded-xl border-2 text-left transition-all ${
-            aceita_internacional
-              ? "border-blue-900 bg-blue-50"
-              : "border-gray-200 hover:border-gray-300"
-          }`}
-        >
-          <span className="text-3xl">🌍</span>
-          <div className="flex-1">
-            <p className={`font-semibold ${aceita_internacional ? "text-blue-900" : "text-gray-900"}`}>
-              Bolsas Internacionais
-            </p>
-            <p className="text-sm text-gray-500 mt-0.5">
-              CAPES, CNPq, Fulbright, DAAD, JSPS, Erasmus e mais
-            </p>
-          </div>
-          {aceita_internacional && <span className="text-blue-900">✓</span>}
-        </button>
 
         <div className="mt-8">
           <Button
