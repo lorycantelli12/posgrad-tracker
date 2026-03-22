@@ -40,11 +40,14 @@ export default function DashboardPage() {
     const niveis = JSON.parse(sessionStorage.getItem("posgrad_niveis") || "[]") as Nivel[];
     const aceita_ead = JSON.parse(sessionStorage.getItem("posgrad_ead") || "false") as boolean;
 
-    const prefs: UserPreferences = { grandes_areas: areas, micro_areas, estados, niveis, aceita_ead };
+    const paises = JSON.parse(sessionStorage.getItem("posgrad_paises") || "[]") as string[];
+    const quer_brasil = JSON.parse(sessionStorage.getItem("posgrad_quer_brasil") || "true") as boolean;
+
+    const prefs: UserPreferences = { grandes_areas: areas, micro_areas, estados, niveis, aceita_ead, paises, quer_brasil };
     const hasPrefs = areas.length > 0 || estados.length > 0 || niveis.length > 0;
     setTemPrefs(hasPrefs);
 
-    fetchEditaisComScore(hasPrefs ? prefs : { grandes_areas: [], micro_areas: [], estados: [], niveis: [], aceita_ead: false }).then(setEditais);
+    fetchEditaisComScore(hasPrefs ? prefs : { grandes_areas: [], micro_areas: [], estados: [], niveis: [], aceita_ead: false, paises: [], quer_brasil: true }).then(setEditais);
   }, []);
 
   const editaisFiltrados = editais.filter((e) => {

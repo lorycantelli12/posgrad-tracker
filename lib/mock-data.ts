@@ -154,7 +154,8 @@ export interface UserPreferences {
   estados: UF[];
   niveis: Nivel[];
   aceita_ead: boolean;
-  aceita_internacional?: boolean;
+  paises: string[];       // regiões internacionais: "europa" | "america_norte" | "japao" | "china" | "outros"
+  quer_brasil: boolean;   // true = inclui editais nacionais
 }
 
 export const GRANDES_AREAS: { value: GrandeArea; label: string; emoji: string }[] = [
@@ -502,18 +503,32 @@ export function calcularScore(edital: Edital, prefs: UserPreferences): number {
   if (prefs.micro_areas.length > 0 && !prefs.micro_areas.includes(edital.micro_area)) {
     return 0;
   }
-  // Internacional: se o edital é internacional e usuário não aceita, eliminar
-  if ((edital as any).internacional && !prefs.aceita_internacional) {
-    return 0;
+  const isInternacional = !!(edital as any).internacional;
+
+  // Internacional: elimina se usuário não quer exterior
+  if (isInternacional && prefs.paises.length === 0) return 0;
+
+  // Internacional: filtra por região se usuário especificou
+  if (isInternacional && prefs.paises.length > 0 && !prefs.paises.includes("outros")) {
+    const pd = ((edital as any).pais_destino || "").toLowerCase();
+    const fonte = (edital.fonte || "").toLowerCase();
+    const match =
+      (prefs.paises.includes("europa") && (fonte === "euraxess" || pd.includes("europ"))) ||
+      (prefs.paises.includes("japao") && (pd.includes("jap"))) ||
+      (prefs.paises.includes("china") && (pd.includes("chin"))) ||
+      (prefs.paises.includes("america_norte") && (pd.includes("estados unidos") || pd.includes("eua") || pd.includes("canad")));
+    if (!match) return 0;
   }
+
+  // Brasil: elimina editais nacionais se usuário só quer exterior
+  if (!isInternacional && !prefs.quer_brasil) return 0;
+
   // Estado: se selecionou estados, o edital DEVE ser daquele estado
-  // (EaD é exceção — pode ser de qualquer estado se aceita_ead = true)
-  // (Internacional também é exceção)
   if (
+    !isInternacional &&
     prefs.estados.length > 0 &&
     !prefs.estados.includes(edital.estado) &&
-    !(edital.modalidade === "ead" && prefs.aceita_ead) &&
-    !(edital as any).internacional
+    !(edital.modalidade === "ead" && prefs.aceita_ead)
   ) {
     return 0;
   }

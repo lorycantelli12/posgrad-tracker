@@ -35,6 +35,8 @@ export default function NotificacoesPage() {
         estados: JSON.parse(sessionStorage.getItem("posgrad_estados") || "[]") as UF[],
         niveis: JSON.parse(sessionStorage.getItem("posgrad_niveis") || "[]") as Nivel[],
         aceita_ead: JSON.parse(sessionStorage.getItem("posgrad_ead") || "false") as boolean,
+        paises: JSON.parse(sessionStorage.getItem("posgrad_paises") || "[]") as string[],
+        quer_brasil: JSON.parse(sessionStorage.getItem("posgrad_quer_brasil") || "true") as boolean,
       };
       await saveUserPreferences(userId, prefs);
     } catch { /* não crítico */ }
