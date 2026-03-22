@@ -31,7 +31,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Rodar scrapers + upsert Supabase
-        run: python scrapers/main.py all
+        run: PYTHONPATH=. python scrapers/main.py all
 
       - name: Upload logs (artefato)
         if: always()
